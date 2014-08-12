@@ -72,12 +72,14 @@ public class BaseUsersServiceImpl implements BaseUsersService {
 			return "00";
 		}
 		BaseUsers dataBaseUser = list.get(0);
+		System.out.println("--" + compareTo(dataBaseUser.getLastLoginTime()));
 		//错误3次,并且时间未到
 		if (dataBaseUser.getErrorCount() >= 3 && compareTo(dataBaseUser.getLastLoginTime())) {
 			return "请你联系管理员，或者"+millisText+"之后再次尝试！";
 		}
 		// 传入的password已经md5过一次了,并且为小写，加入salt值
 		String passwordIn = encrypt(criteria.getAsString("passwordIn"), criteria.getAsString("account"));
+		System.out.println("pwd:" + passwordIn);
 		if (!passwordIn.equals(dataBaseUser.getPassword())) {
 			// 密码不正确
 			return loginTimes(dataBaseUser,criteria);
@@ -228,6 +230,7 @@ public class BaseUsersServiceImpl implements BaseUsersService {
 		// 可以更换算法:sha512Hex
 		return DigestUtils.md5Hex(data + "{" + salt + "}");
 	}
+	
 
 	/**
 	 * 限制密码输入次数
@@ -284,6 +287,7 @@ public class BaseUsersServiceImpl implements BaseUsersService {
 		c.setTime(date);
 		long lastly = c.getTimeInMillis();
 		// 60分钟1000*60*60;
+		System.out.println("---" + (now - lastly));
 		return (now - lastly) <= millis;
 	}
 
